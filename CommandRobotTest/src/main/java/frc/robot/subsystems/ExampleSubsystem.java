@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -14,14 +15,18 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 public class ExampleSubsystem extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
 
-  private SparkMax m_testMortor; 
+  private SparkMax leftFront; 
+  private SparkMax rightBack;
+  private DifferentialDrive diff;
   private commandXboxControllerDB m_joyStick; 
 
   public ExampleSubsystem(commandXboxControllerDB xboxController) {
 
 
     setDefaultCommand(joyStickSpeed());
-    m_testMortor = new SparkMax(2, MotorType.kBrushless);
+    leftFront = new SparkMax(2, MotorType.kBrushless);
+    rightBack = new SparkMax(6, MotorType.kBrushless);
+    diff = new DifferentialDrive(leftFront,rightBack);
     m_joyStick = xboxController; 
   }
 
@@ -34,7 +39,7 @@ public class ExampleSubsystem extends SubsystemBase {
     // Inline construction of command goes here.
     // Subsystem::RunOnce implicitly requires `this` subsystem.
     return run(
-        () -> { runMotor(speed);
+        () -> { //runMotor(speed);
           /* one-time action goes here */
         });
   }
@@ -43,7 +48,8 @@ public class ExampleSubsystem extends SubsystemBase {
     // Inline construction of command goes here.
     // Subsystem::RunOnce implicitly requires `this` subsystem.
     return run(
-        () -> { runMotor(m_joyStick.getLeftX());
+        () -> { runMotor(m_joyStick.getLeftY(), m_joyStick.getRightX());
+                
           /* one-time action goes here */
         });
   }
@@ -59,8 +65,10 @@ public class ExampleSubsystem extends SubsystemBase {
     return false;
   }
 
-private void runMotor (double speed) {
-      m_testMortor.set(speed);
+private void runMotor (double Lspeed, double Rspeed) {
+      //leftFront.set(Lspeed);
+      //rightBack.set(Rspeed);
+      diff.arcadeDrive(Lspeed, Rspeed);
 }
 
   @Override
